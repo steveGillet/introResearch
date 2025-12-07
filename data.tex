@@ -1,0 +1,181 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{lipsum} % For placeholder text, remove if not needed
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{float}
+\geometry{margin=1in}
+\title{ROBO 5008 - Intro to Research \ Assignment: Data \& Figures}
+\author{Steve Gillet}
+\date{\today}
+\begin{document}
+\maketitle
+\section*{Instructions}
+\emph{What you turn in should be neatly prepared, and concisely address all parts of the assignment in a clearly organized manner. Be sure to explain your analysis and document all decisions (particularly for data cleaning). Code-related questions should be done in Python. Do not include in your final report, but rather include a link to a github repository You are encouraged to discuss your work with other students, but submitted work must be your own. Please indicate on the first page of your answer sheet who your collaborators for this assignment are.}
+\emph{All figures require axes labels (including units where applicable), legends where appropriate, and a clear title or caption. Points will be deducted if these elements are not included.}
+
+\newpage
+\section{Data Cleaning (25\%)}
+\emph{Prepare a cleaned version of the dataset. Your cleaning process should:}
+\begin{itemize}[label=\textbullet]
+\item \emph{Identify and handle missing values. Support your approach to handling missing data in your report.}
+\item \emph{Standardize categorical variables (species, sex, island names).}
+\item \emph{Identify outliers and decide whether to remove, adjust, or retain them (justify your choice).}
+\end{itemize}
+\emph{Deliverables:}
+\begin{itemize}[label=\textbullet]
+\item \emph{Cleaned CSV file.} % Note: This will be in GitHub, mention link below
+\item \emph{Brief written description ($\leq$200 words) of all cleaning steps and your rationale.}
+\end{itemize}
+\subsection{Cleaning Summary}
+So for missing values my strategy was to drop any rows where all of the key numerical measurements were missing as these don't add anything useful to the dataset, where only some of the data is missing I imputed the missing data with the mean for that species group so that that particular measure isn't changed while still being able to use the other useful data.
+Where the sex was missing I kept that as NaN since that data might still be useful for giving information about the species, imputing a sex would skew sex information unecessarily.
+For category variables I standardized the species names so that they are all either simply 'Adelie', 'Gentoo', and 'Chinstrap' to make them easier to handle and read.
+With outliers I just left them, the data is meanful and changing it would bias the data towards average penguins and weird penguins are the ones that change the world.
+
+\newpage
+\section{Exploratory Data Analysis (25\%)}
+\emph{Explore relationships in the cleaned dataset:}
+\begin{itemize}[label=\textbullet]
+\item \emph{Compare measurements (bill length, flipper length, body mass, etc.) by species and sex.}
+\item \emph{Explore correlations between numerical measurements.}
+\item \emph{Visualize distributions and relationships with appropriate plots.}
+\end{itemize}
+\emph{Deliverables:}
+\begin{itemize}[label=\textbullet]
+\item \emph{2–5 exploratory figures with captions. These figures need not be as polished as your final figures.}
+\item \emph{2–3 sentences of interpretation for each figure.}
+\end{itemize}
+\subsection{Exploratory Figures and Interpretations}
+% Placeholder for figures
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{exploratory_fig4.png}
+\caption{Data Correlation Heatmap.}
+\end{figure}
+I started with the heatmap to see how much correlation there is amongst the different variables.
+You can see some promising ones to start off with like culmen depth and flipper length.
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{exploratory_fig3.png}
+\caption{Data Comparison by Species.}
+\end{figure}
+I then plotted all of the variables against eachother and colored it by species and you can see that some of the data that had the lowest correlation is actually very correlated by species so I went for culmen length versus culmen depth for further investigation though culmen length versus flipper length is also pretty uncorrelated by species.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{exploratory_fig1.png}
+\caption{Culmen Length vs. Culmen Depth by Species and Sex.}
+\end{figure}
+Then I plotted culmen length versus culmen depth by species and sex and you can see some pretty clear grouping.
+I'm fairly confident I could train a ML model to identify a penguins species and gender based on their honker with some degree of accuracy.
+
+\newpage
+\section{Basic Modeling (25\%)}
+\emph{Choose one modeling path:}
+\begin{itemize}[label=\textbullet]
+\item \emph{Regression: Predict body mass from bill length, flipper length, and sex.}
+\item \emph{Classification: Predict species from numerical measurements.}
+\end{itemize}
+\emph{Deliverables:}
+\begin{itemize}[label=\textbullet]
+\item \emph{Model summary table (coefficients, accuracy, and/or R² as appropriate).}
+\item \emph{A paragraph discussing the modeling approach and potential shortcomings.}
+\item \emph{1–2 sentence interpretation of results.}
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+Metric & Value \\
+\hline
+Accuracy & 0.8507 \\
+\hline
+Average Precision (weighted) & 0.86 \\
+\hline
+Average Recall (weighted) & 0.85 \\
+\hline
+Average F1-Score (weighted) & 0.85 \\
+\hline
+\end{tabular}
+\caption{Model summary metrics for combined species/sex classification.}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|c|c|c|}
+\hline
+Class & Culmen Length Coef & Culmen Depth Coef & Intercept \\
+\hline
+Adelie Female & -1.274 & 1.888 & 22.87 \\
+\hline
+Adelie Male & -0.823 & 3.095 & -16.98 \\
+\hline
+Chinstrap Female & 0.081 & -0.242 & 3.630 \\
+\hline
+Chinstrap Male & 0.338 & 0.227 & -17.09 \\
+\hline
+Gentoo Female & 0.619 & -3.006 & 22.13 \\
+\hline
+Gentoo Male & 1.059 & -1.962 & -14.57 \\
+\hline
+\end{tabular}
+\caption{Logistic regression coefficients per class.}
+\end{table}
+
+\subsection{Discussion}
+I used multinomial logistic regression here for simplicity to classify the species/sex from culmen length/depth.
+The approach involves label-encoding the target, splitting the data 80/20 (train/test), and fitting the model.
+Potential shortcomings include overly simplistic model, data correlation, and small sample size.
+These could be mitigated by incorporating features that capture sex differences better.
+
+\subsection{Interpretation}
+The model achieved 85\% accuracy which tells you that using culmen dimensions is effective for distinguishing these penguin species and even sex to a slightly lesser extent.
+
+\newpage
+\section{Final Figures (25\%)}
+\emph{Select two figures from your analysis that best communicate your findings. Refine them for publication-quality presentation (this may require post-processing in 3rd party software such as Adobe Illustrator or Affinity Designer):}
+\begin{itemize}[label=\textbullet]
+\item \emph{Clear, consistent labeling and color scheme.}
+\item \emph{Informative captions.}
+\item \emph{Axes labeled with units where applicable.}
+\end{itemize}
+\emph{Deliverables:}
+\begin{itemize}[label=\textbullet]
+\item \emph{Two final polished figures with captions.}
+\item \emph{Brief paragraph explaining why these figures were chosen, what data they portray and what your conclusions are from the figures.}
+\item \emph{2–3 sentences on your approach and workflow to generate these final figures. Are there any improvements you envision for the future?}
+\end{itemize}
+\subsection{Polished Figures}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{final_fig1.pdf}
+\caption{Bill Length v Bill Depth.}
+\end{figure}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{final_fig2.pdf}
+\caption{Bill Depth v. Body Mass.}
+\end{figure}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{final_fig3.pdf}
+\caption{Bill Length v. Body Mass.}
+\end{figure}
+
+\subsection{Explanation}
+So I improved my bill length/depth plot and then I added a plot for bill length vs body mass and bill depth vs body mass because I wanted to show how adding body mass adds a dimension by which you can differentiate the sex of the penguins better and improve the accuracy of our model.
+
+\subsection{Approach and Workflow}
+I used seaborn context and styles to get the plots a bit more official looking based on what other researchers did.
+I really wish there was a way to show the 3D plot of body mass vs bill length vs bill depth because then you really get a sense for how adding body mass makes that sex difference pop out, maybe there's other plots and I should have approached it from a different angle but I'd have to think about it.
+I also want to play with the colors more because the plots look really nice and clean but I just think they need some little bit more background or lines or shadows or something to make them pop, the next thing I would look into is how to add a background color while maintaing the colorblind color scheme.
+
+\newpage
+\section{GitHub Repository}
+The code used for data cleaning, analysis, modeling, and figure generation, along with the cleaned CSV file, is available at: \url{https://github.com/yourusername/yourrepo} % Replace with your actual link
+\end{document}
